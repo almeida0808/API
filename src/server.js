@@ -10,6 +10,13 @@ app.get('/message/:id/:user', (request, response) => {
     para o usuário: ${user}`)
 })
 
+app.get('/users' , (request, response) => {
+    const {page, categoria} = request.query
+
+    response.send(`você está na pag:${page}.
+    e na categoria:${categoria}.`)
+})
+
 const PORT = 3333; // definimos o ndereço da porta
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
 // listen fica observando o endereço da nossa porta e assim que for iniciado coloca essa mensagem no console.log

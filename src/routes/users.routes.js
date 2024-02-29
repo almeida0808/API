@@ -1,12 +1,7 @@
-const { Router } = require("express");
+const { Router } = require("express"); // tiramos o Router de dentro do express 
 
-const usersRouter = Router();
-// tiramos o Router de dentro do express em forma de const pra usarmos a seguir
+const usersRouter = Router(); // Roda o Router toda vez que usarmos o usersRouter
 
-usersRouter.post("/", (request, response) => {
-  const { email, senha, name } = request.body;
+usersRouter.post("/", ); // executa a função toda vez que fiermos alguma solicitação relacionado com a parte de usuários 
 
-  response.json({ email, senha, name });
-});
-
-module.exports = usersRouter; // exporta todo o arquivo pra ser usado em outro lugar.
+module.exports = usersRouter; // exporta todo o arquivo para conectarmos com o index.js

@@ -1,15 +1,17 @@
 require("express-async-errors"); // importa a biblioteca de erros do node
-const database = require("./database/sqlite"); // importa o banco de dados
+const migrationsRun = require("./database/sqlite/migrations"); // importa o banco de dados
 const AppError = require("./utils/AppError"); // importa as funções de erros/coisas inesperadas
+
 const express = require("express"); // adiciona todas funcionalidades do express
 const routes = require("./routes"); // importa nosso arquivo de controle de rotas pro servidor
+
+migrationsRun()
 
 const app = express(); // inicia o express
 app.use(express.json()); // indica pra nossa aplicação que os dados que estão sendo capturados são no formato json.
 
 app.use(routes); // roda o nosso arquivo de rota a cada nova solicitação feita pelo usuário
 
-database(); // roda o nosso banco de dados
 
 app.use((error, request, response, next) => { // toda vez que for requisitado algo, ele faz a função abaixo
   if (error instanceof AppError) { // se o tipo de erro da aplicação for um erro do cliente , retorne a seguinte mensagem:

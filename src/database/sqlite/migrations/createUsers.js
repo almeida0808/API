@@ -8,5 +8,5 @@ const createUsers = `
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   )
-` //ESSA TABELA SÓ VAI SER CRIADO CASO ELA NÃO EXISTA 
+` // cria um database com a tabela users ja configurada
 module.exports = createUsers

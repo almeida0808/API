@@ -5,9 +5,10 @@ const AppError = require("./utils/AppError"); // importa as funções de erros/c
 const express = require("express"); // adiciona todas funcionalidades do express
 const routes = require("./routes"); // importa nosso arquivo de controle de rotas pro servidor
 
-migrationsRun()
+migrationsRun() // cria nosso banco de dados caso não tenha nenhum criado
 
 const app = express(); // inicia o express
+
 app.use(express.json()); // indica pra nossa aplicação que os dados que estão sendo capturados são no formato json.
 
 app.use(routes); // roda o nosso arquivo de rota a cada nova solicitação feita pelo usuário

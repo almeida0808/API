@@ -53,10 +53,16 @@ class usersController {
       throw new AppError("Esse email já foi cadastrado.");
     }
 
-    // atualiza o email e nome que foi informado
-    user.name = name;
-    user.email = email;
-
+     // adiciona uma verificação pra atualizar nome ou email
+     if(name){ // atualize apenas se tiver um nome novo informado
+      user.name = name;
+     }
+     if(email){ // atualize apenas se tiver um email novo informado
+      user.email = email;
+     }
+    
+ 
+   
     // ALTERAÇÃO DE SENHA:
 
     // caso o usúario tenha informado uma nova senha, veja se ele passou a antiga senha
@@ -82,9 +88,9 @@ class usersController {
     password = ?,
     name = ?,
     email = ?,
-    updated_at = ?
+    updated_at = DATETIME('now')
     WHERE id = ?`,
-      [user.password, user.name, user.email, new Date(), id]
+      [user.password, user.name, user.email, id]
     );
 
     return response.json(); // retorna que foi criado com sucesso

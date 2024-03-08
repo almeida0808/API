@@ -32,3 +32,4 @@ const PORT = 3333; // definimos o ndereço da porta
 app.listen(PORT, () =>
   console.log(`Server is running on port ${PORT}`)
 ); /* LISTEN fica observando o endereço da nossa porta e assim que for iniciado coloca essa mensagem no console.log*/
+

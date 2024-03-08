@@ -1,4 +1,4 @@
-const { hash, compare } = require("bcryptjs"); // importa uma fução(hash) da biblioteca bcrypts que faz a senha fcar criptografada
+const { hash, compare } = require("bcryptjs"); // importa uma função(compare) da biblioteca bcrypts que permie que a gente compare uma senha normal com uma criptografada
 const AppError = require("../utils/AppError"); // importa o nosso capturador de erros
 const sqliteConnection = require("../database/sqlite"); // importa a função que faz a conexão com nosso server
 
@@ -47,7 +47,6 @@ class usersController {
       "SELECT * FROM users WHERE email = (?)",
       [email]
     ); // caso tente atualizar o email, ele verifica se esse email ja não foi cadastrado
-
       
     if (emailExist && emailExist.id !== user.id) { // caso o email exista e não for do mesmo usuário que está tentando atualizar, ele emite um erro
       throw new AppError("Esse email já foi cadastrado.");
@@ -55,16 +54,11 @@ class usersController {
 
      // adiciona uma verificação pra atualizar nome ou email
      if(name){ // atualize apenas se tiver um nome novo informado
-      user.name = name;
-     }
+      user.name = name;}
      if(email){ // atualize apenas se tiver um email novo informado
-      user.email = email;
-     }
-    
- 
-   
+      user.email = email;}
+  
     // ALTERAÇÃO DE SENHA:
-
     // caso o usúario tenha informado uma nova senha, veja se ele passou a antiga senha
     if (password && !old_password) {  // se não passou envie um erro
       throw new AppError("Digite sua senha antiga!");
@@ -80,7 +74,6 @@ class usersController {
 
       user.password = await hash(password, 8); // caso esteja correta , atualize a senha antiga para a senha que foi passada dessa vez(ja criptografando ela) 
     }
-
     // roda o código que atualiza os dados la dentro da nossa tabela no database
     await database.run(
       `

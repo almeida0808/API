@@ -55,6 +55,17 @@ class NotesController {
 
     return response.json();
   }
+
+  async index(request, response) {
+    const { user_id, title } = request.query;
+
+    const notes = await knex("notes") // busca dentro da tabela de notas usando o knex
+    .where({ user_id }) // mostre apenas notas do usuário que esta querendo ver as notas
+    .whereLike("title", `%${title}%`) // whereLike verifica se existe uma palavra chave dentro daquele campo que selecionamos. "title" é o campo que selecionamos e esse %{title}% é a palavra que está dentro do query params , as % significam que ele verifica tanto no inicio quanto no final, se existir essa palavra que eu estou pesquisando você me mostra
+    .orderBy("title"); // ordena pelo title
+
+    return response.json({ notes });
+  }
 }
 
 module.exports = NotesController;

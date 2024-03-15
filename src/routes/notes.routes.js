@@ -8,7 +8,7 @@ const notesController = new NotesController(); // possibilita que rodamos as fun
 
 notesRouter.post("/:user_id", notesController.create); // caso seja acessado a rota de criar notas ele realiza a função create, que em do controle de notas
 notesRouter.get("/:id", notesController.show)
-
 notesRouter.delete("/:id", notesController.delete)
+notesRouter.get("/", notesController.index)
 
 module.exports = notesRouter; 

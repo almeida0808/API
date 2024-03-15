@@ -57,12 +57,34 @@ class NotesController {
   }
 
   async index(request, response) {
-    const { user_id, title } = request.query;
+    const { user_id, title, tags } = request.query;
+    let notes;
 
-    const notes = await knex("notes") // busca dentro da tabela de notas usando o knex
-    .where({ user_id }) // mostre apenas notas do usuário que esta querendo ver as notas
-    .whereLike("title", `%${title}%`) // whereLike verifica se existe uma palavra chave dentro daquele campo que selecionamos. "title" é o campo que selecionamos e esse %{title}% é a palavra que está dentro do query params , as % significam que ele verifica tanto no inicio quanto no final, se existir essa palavra que eu estou pesquisando você me mostra
-    .orderBy("title"); // ordena pelo title
+    if (tags) {
+      // caso tenha alguma tag passada como parametro, ele pesqusa dessa maneira:
+      const filterTags = tags
+        .split(",") // usa o split para separar as tags com virgula, caso tenha mais de uma
+        .map((tag) => tag.trim()); // basicamente ele pega apenas as tags enves de pegar a virgula junto
+     
+        notes = await knex("tags")
+        .select([
+          "notes.title",
+          "notes.id",
+          "notes.user_id",
+        ])
+        .where("notes.user_id", user_id)
+        .whereLike("notes.title" , `%${title}%`)
+        .whereIn("name", filterTags) // whereIn funciona assim: "name" é o nome do campo e o filterTags são as tags que a gente pesquisa pelo query params
+        .innerJoin("notes", "notes.id", "tags.note_id")
+        .orderBy("title")
+      } 
+    else {
+      // caso seja uma pesquisa sem ser por tags, ele faz assim:
+      notes = await knex("notes") // busca dentro da tabela de notas usando o knex
+        .where({ user_id }) // mostre apenas notas do usuário que esta querendo ver as notas
+        .whereLike("title", `%${title}%`) // whereLike verifica se existe uma palavra chave dentro daquele campo que selecionamos. "title" é o campo que selecionamos e esse %{title}% é a palavra que está dentro do query params , as % significam que ele verifica tanto no inicio quanto no final, se existir essa palavra que eu estou pesquisando você me mostra
+        .orderBy("title"); // ordena pelo title
+    }
 
     return response.json({ notes });
   }

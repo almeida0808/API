@@ -37,7 +37,7 @@ class NotesController {
     response.json(); // envia como resposta como json
   }
 
-  async show(request, response) {
+  async show(request, response) { // essa função é pra quando oo usuárioo clicar numa nota, vai ser filtrado pelo id da nota q foi clicada.
     const { id } = request.params; // retira o id que foi passado coomo parametro
 
     const note = await knex("notes").where({ id }).first();
@@ -67,7 +67,7 @@ class NotesController {
         .map((tag) => tag.trim()); // basicamente ele pega apenas as tags enves de pegar a virgula junto
      
         notes = await knex("tags")
-        .select([
+        .select([ // quais campos vamos selecionar de ambas tabelas
           "notes.title",
           "notes.id",
           "notes.user_id",
@@ -75,8 +75,9 @@ class NotesController {
         .where("notes.user_id", user_id)
         .whereLike("notes.title" , `%${title}%`)
         .whereIn("name", filterTags) // whereIn funciona assim: "name" é o nome do campo e o filterTags são as tags que a gente pesquisa pelo query params
-        .innerJoin("notes", "notes.id", "tags.note_id")
-        .orderBy("title")
+        .innerJoin("notes", "notes.id", "tags.note_id") // de dentro do notes pegue o notes.id, tags.note.id
+        .orderBy("title") // ordene pelo tituloo]
+        
       } 
     else {
       // caso seja uma pesquisa sem ser por tags, ele faz assim:
@@ -86,7 +87,17 @@ class NotesController {
         .orderBy("title"); // ordena pelo title
     }
 
-    return response.json({ notes });
+    const userTags = await knex("tags")// seleciona as tags
+    .where({user_id}) // filtra apenas as que tem o user id
+    const NotesComTags = notes.map(note => {// entra em todas as notas
+      const noteTags = userTags.filter(tag => tag.note_id === note.id) // filtra pra mostrar apenas as notas que tem o mesmo id da nota 
+
+      return{
+        ...note, // coloca todas as notas pegas , dentro do noovo array
+        tags: noteTags // adiciona as tags junto com as notas
+      }
+    })
+    return response.json({ NotesComTags }); // retorna como resposta as notas juntamente mostrando junto as tags
   }
 }
 

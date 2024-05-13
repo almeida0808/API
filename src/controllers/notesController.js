@@ -4,7 +4,7 @@ class NotesController {
   async create(request, response) {
     // função de criar nota
     const { title, description, tags, links } = request.body; // pega os dados do request.body ja desestruturando
-    const { user_id } = request.params; // pega o id do usuário de dentro do parametro
+    const user_id = request.user.id; // pega o id do usuário de dentro do parametro
 
     const [note_id] = await knex("notes").insert({
       // ele inseri os dados dentro do data base, e guarda ppra gente o id da nota
@@ -37,7 +37,8 @@ class NotesController {
     response.json(); // envia como resposta como json
   }
 
-  async show(request, response) { // essa função é pra quando oo usuárioo clicar numa nota, vai ser filtrado pelo id da nota q foi clicada.
+  async show(request, response) {
+    // essa função é pra quando oo usuárioo clicar numa nota, vai ser filtrado pelo id da nota q foi clicada.
     const { id } = request.params; // retira o id que foi passado coomo parametro
 
     const note = await knex("notes").where({ id }).first();
@@ -57,7 +58,8 @@ class NotesController {
   }
 
   async index(request, response) {
-    const { user_id, title, tags } = request.query;
+    const { title, tags } = request.query;
+    const user_id = request.user.id;
     let notes;
 
     if (tags) {
@@ -65,21 +67,20 @@ class NotesController {
       const filterTags = tags
         .split(",") // usa o split para separar as tags com virgula, caso tenha mais de uma
         .map((tag) => tag.trim()); // basicamente ele pega apenas as tags enves de pegar a virgula junto
-     
-        notes = await knex("tags")
-        .select([ // quais campos vamos selecionar de ambas tabelas
+
+      notes = await knex("tags")
+        .select([
+          // quais campos vamos selecionar de ambas tabelas
           "notes.title",
           "notes.id",
           "notes.user_id",
         ])
         .where("notes.user_id", user_id)
-        .whereLike("notes.title" , `%${title}%`)
+        .whereLike("notes.title", `%${title}%`)
         .whereIn("name", filterTags) // whereIn funciona assim: "name" é o nome do campo e o filterTags são as tags que a gente pesquisa pelo query params
         .innerJoin("notes", "notes.id", "tags.note_id") // de dentro do notes pegue o notes.id, tags.note.id
-        .orderBy("title") // ordene pelo tituloo]
-        
-      } 
-    else {
+        .orderBy("title"); // ordene pelo tituloo]
+    } else {
       // caso seja uma pesquisa sem ser por tags, ele faz assim:
       notes = await knex("notes") // busca dentro da tabela de notas usando o knex
         .where({ user_id }) // mostre apenas notas do usuário que esta querendo ver as notas
@@ -87,16 +88,17 @@ class NotesController {
         .orderBy("title"); // ordena pelo title
     }
 
-    const userTags = await knex("tags")// seleciona as tags
-    .where({user_id}) // filtra apenas as que tem o user id
-    const NotesComTags = notes.map(note => {// entra em todas as notas
-      const noteTags = userTags.filter(tag => tag.note_id === note.id) // filtra pra mostrar apenas as notas que tem o mesmo id da nota 
+    const userTags = await knex("tags") // seleciona as tags
+      .where({ user_id }); // filtra apenas as que tem o user id
+    const NotesComTags = notes.map((note) => {
+      // entra em todas as notas
+      const noteTags = userTags.filter((tag) => tag.note_id === note.id); // filtra pra mostrar apenas as notas que tem o mesmo id da nota
 
-      return{
+      return {
         ...note, // coloca todas as notas pegas , dentro do noovo array
-        tags: noteTags // adiciona as tags junto com as notas
-      }
-    })
+        tags: noteTags, // adiciona as tags junto com as notas
+      };
+    });
     return response.json({ NotesComTags }); // retorna como resposta as notas juntamente mostrando junto as tags
   }
 }

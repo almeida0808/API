@@ -1,6 +1,6 @@
-const knex = require("../database/knex");
-const DiskStorage = require("../providers/diskStorage");
-const AppError = require("../utils/AppError");
+const knex = require("../database/knex"); // importa a conexão com database
+const DiskStorage = require("../providers/diskStorage"); // funcionalidades de upload de imagem
+const AppError = require("../utils/AppError"); // controlador dos erros da aplicação
 
 class UserAvatarController {
   async update(request, response) {
@@ -23,7 +23,7 @@ class UserAvatarController {
 
     const filename = await diskStorage.saveFile(avatarFilename); // quando o user envia uma imagem ela vai pra pasta temp, nessa linha nos criamos uma const que guarda o nome da nova imagem que foi enviada e tambem pega a nova imagem e tira da pasta tmp e guarda na pasta upload usando a function saveFile
 
-    user.avatar = filename; // alera no banco de dados o antigo nome da imgamem para o novo nome
+    user.avatar = filename; // alera no banco de dados o antigo nome da imgmagem para o novo nome
 
     await knex("users").update(user).where({ id: user_id }); // dentro da tabela users ele atualiza os dados do usuário atingo pros novos dados , filtrando pelo id para não ter risco de atualizar o user errado.
     return response.json(user); // retorna os dados do user

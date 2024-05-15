@@ -15,6 +15,7 @@ const usersRouter = Router(); // Roda o Router toda vez que usarmos o usersRoute
 
 usersRouter.post("/", usersController.create); // executa a função toda vez que fiermos alguma solicitação relacionado com a parte de usuários
 usersRouter.put("/", ensureAuthenticated, usersController.update); // toda vez que colocarmos um id como parametro automaticamente ele entende que estamos querendo atualizar o usuário
+
 usersRouter.patch(
   "/avatar", // indica a rota
   ensureAuthenticated, // faz a verificação se o user esta autenticado

@@ -79,6 +79,7 @@ class NotesController {
         .whereLike("notes.title", `%${title}%`)
         .whereIn("name", filterTags) // whereIn funciona assim: "name" é o nome do campo e o filterTags são as tags que a gente pesquisa pelo query params
         .innerJoin("notes", "notes.id", "tags.note_id") // de dentro do notes pegue o notes.id, tags.note.id
+        .groupBy("notes.id")
         .orderBy("title"); // ordene pelo tituloo]
     } else {
       // caso seja uma pesquisa sem ser por tags, ele faz assim:

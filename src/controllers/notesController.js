@@ -38,15 +38,35 @@ class NotesController {
   }
 
   async show(request, response) {
-    // essa função é pra quando oo usuárioo clicar numa nota, vai ser filtrado pelo id da nota q foi clicada.
-    const { id } = request.params; // retira o id que foi passado coomo parametro
+    try {
+      // Obtenha o ID da nota dos parâmetros da solicitação
+      const { id } = request.params;
 
-    const note = await knex("notes").where({ id }).first();
-    const tags = await knex("tags").where({ note_id: id }).orderBy("name");
-    const links = await knex("links")
-      .where({ note_id: id })
-      .orderBy("created_at");
-    return response.json({ ...note, tags, links });
+      // Obtenha o user_id do objeto request
+      const user_id = request.user.id;
+
+      // Consulte a nota no banco de dados usando o Knex
+      const note = await knex("notes").where({ id }).first();
+
+      // Verifique se a nota existe e se pertence ao usuário atual
+      if (note && note.user_id === user_id) {
+        // Consulte as tags e os links relacionados à nota
+        const tags = await knex("tags").where({ note_id: id }).orderBy("name");
+        const links = await knex("links")
+          .where({ note_id: id })
+          .orderBy("created_at");
+
+        // Retorne os dados da nota junto com as tags e os links
+        return response.json({ ...note, tags, links });
+      } else {
+        // Se a nota não existir ou não pertencer ao usuário atual, retorne uma resposta adequada
+        return response.status(404).json({ error: "Nota não encontrada" });
+      }
+    } catch (error) {
+      // Se ocorrer algum erro durante o processamento, retorne uma resposta de erro
+      console.error("Erro ao recuperar a nota:", error);
+      return response.status(500).json({ error: "Erro interno do servidor" });
+    }
   }
 
   async delete(request, response) {

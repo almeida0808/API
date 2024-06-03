@@ -1,4 +1,5 @@
 require("express-async-errors"); // importa a biblioteca de erros do node
+require("dotenv/config");
 
 const migrationsRun = require("./database/sqlite/migrations"); // importa o banco de dados
 
@@ -37,7 +38,7 @@ app.use((error, request, response, next) => {
   });
 });
 
-const PORT = 3333; // definimos o ndereço da porta
+const PORT = process.env.PORT || 3333; // definimos o ndereço da porta
 app.listen(PORT, () =>
   console.log(`Server is running on port ${PORT}`)
 ); /* LISTEN fica observando o endereço da nossa porta e assim que for iniciado coloca essa mensagem no console.log*/

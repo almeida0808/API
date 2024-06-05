@@ -1,6 +1,5 @@
 const { hash } = require("bcryptjs"); // importa uma função(compare) da biblioteca bcrypts que permie que a gente compare uma senha normal com uma criptografada
 const AppError = require("../utils/AppError"); // importa o nosso capturador de erros
-
 class UserCreateService {
   constructor(userRepository) {
     this.userRepository = userRepository;
